@@ -1,27 +1,51 @@
 var civclicker;
 var civdoc;
 
+var heap = new Heap(function(a, b) {
+    return a.score > b.score;
+});
+
 window.onload = function(){
   civclicker = window.frames[0].frameElement.contentWindow;
   civdoc = civclicker.document;
 }
 
 window.setInterval(function aiLoop() {
+  foodResourceHeuristic();
+  populationLimitHeuristic();
+
+  for (var i=0; i<5 && heap.size()>0; i++){
+    var action = heap.pop().action;
+    action();
+  }
+}, 1000);
+
+function foodResourceHeuristic(){
   var food = civclicker.resourceData.find( function(elem) {
     return (elem.id === 'food');
   });
 
-  if (food.owned < food.limit) {
-    clickFood();
-  }
+  var score = (food.limit - food.owned)/food.limit;
+  heap.push({score:score, action: clickFood});
+}
 
+function populationLimitHeuristic() {
   var population = civclicker.population;
-  if (population.limit === 0 || population.current/population.limit < 0.9) {
-    setCustomQuantity(1);
-    clickTent();
+  if (population.limit === 0){
+    var score = 1;
+  }
+  else {
+    var score = population.current/population.limit;
   }
 
-}, 1000);
+  heap.push({
+    score:score,
+    action: function(){
+      setCustomQuantity(1);
+      clickTent();
+    }
+  });
+}
 
 function clickFood(){
   clickResource('#foodRow');
