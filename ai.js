@@ -43,10 +43,7 @@ function clickResource(id) {
   var targetNode = civdoc.querySelector(id + ' button');
   if (targetNode) {
     //--- Simulate a natural mouse-click sequence.
-    triggerMouseEvent (targetNode, "mouseover");
     triggerMouseEvent (targetNode, "mousedown");
-    triggerMouseEvent (targetNode, "mouseup");
-    triggerMouseEvent (targetNode, "click");
   }
 }
 
