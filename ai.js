@@ -1,5 +1,10 @@
-var civclicker = window.frames[0].frameElement.contentWindow;
-var civdoc = civclicker.document;
+var civclicker;
+var civdoc;
+
+window.onload = function(){
+  civclicker = window.frames[0].frameElement.contentWindow;
+  civdoc = civclicker.document;
+}
 
 window.setInterval(function aiLoop() {
   var food = civclicker.resourceData.find( function(elem) {
