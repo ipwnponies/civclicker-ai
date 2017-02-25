@@ -1,4 +1,5 @@
 var civclicker = window.frames[0].frameElement.contentWindow;
+var civdoc = civclicker.document;
 
 window.setInterval(function aiLoop() {
   var food = civclicker.resourceData.find( function(elem) {
@@ -23,7 +24,7 @@ function clickStone(){
 }
 
 function clickResource(id) {
-  var targetNode = civclicker.document.getElementById(id).firstChild.firstChild;
+  var targetNode = civdoc.getElementById(id).firstChild.firstChild;
   if (targetNode) {
     //--- Simulate a natural mouse-click sequence.
     triggerMouseEvent (targetNode, "mouseover");
@@ -34,7 +35,7 @@ function clickResource(id) {
 }
 
 function triggerMouseEvent (node, eventType) {
-    var clickEvent = document.createEvent ('MouseEvents');
+    var clickEvent = civdoc.createEvent ('MouseEvents');
     clickEvent.initEvent (eventType, true, true);
 
     // As mesaured on https://cookie.riimu.net/speed/
