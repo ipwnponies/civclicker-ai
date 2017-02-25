@@ -13,29 +13,29 @@ window.setInterval(function aiLoop() {
   var population = civclicker.population;
   if (population.limit === 0 || population.current/population.limit < 0.9) {
     setCustomQuantity(1);
-    clickPurchase('tentRow')
+    clickTent();
   }
 
 }, 1000);
 
 function clickFood(){
-  clickResource('foodRow')
+  clickResource('#foodRow');
 }
 
 function clickWood(){
-  clickResource('woodRow')
+  clickResource('#woodRow');
 }
 
 function clickStone(){
-  clickResource('stoneRow')
+  clickResource('#stoneRow');
 }
 
 function clickTent(){
-  clickPurchase('tentRow');
+  clickPurchase('#tentRow');
 }
 
 function clickResource(id) {
-  var targetNode = civdoc.getElementById(id).firstChild.firstChild;
+  var targetNode = civdoc.querySelector(id + ' button');
   if (targetNode) {
     //--- Simulate a natural mouse-click sequence.
     triggerMouseEvent (targetNode, "mouseover");
@@ -62,7 +62,7 @@ function setCustomQuantity(quantity){
 }
 
 function clickPurchase(id) {
-  var targetNode = civdoc.querySelector('#' + id + ' .buycustom button');
+  var targetNode = civdoc.querySelector(id + ' .buycustom button');
   if (targetNode) {
     triggerMouseEvent(targetNode, "mousedown");
   }
