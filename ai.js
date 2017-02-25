@@ -9,6 +9,13 @@ window.setInterval(function aiLoop() {
   if (food.owned < food.limit) {
     clickFood();
   }
+
+  var population = civclicker.population;
+  if (population.limit === 0 || population.current/population.limit < 0.9) {
+    setCustomQuantity(1);
+    clickPurchase('tentRow')
+  }
+
 }, 1000);
 
 function clickFood(){
@@ -21,6 +28,10 @@ function clickWood(){
 
 function clickStone(){
   clickResource('stoneRow')
+}
+
+function clickTent(){
+  clickPurchase('tentRow');
 }
 
 function clickResource(id) {
@@ -44,4 +55,15 @@ function triggerMouseEvent (node, eventType) {
     for (var i=0; i < clicksPerSecond; i++){
       node.dispatchEvent (clickEvent);
     }
+}
+
+function setCustomQuantity(quantity){
+  civdoc.getElementById('buildingCustomQty').value = quantity;
+}
+
+function clickPurchase(id) {
+  var targetNode = civdoc.querySelector('#' + id + ' .buycustom button');
+  if (targetNode) {
+    triggerMouseEvent(targetNode, "mousedown");
+  }
 }
