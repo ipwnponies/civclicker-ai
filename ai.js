@@ -51,8 +51,9 @@ function triggerMouseEvent (node, eventType) {
     var clickEvent = civdoc.createEvent ('MouseEvents');
     clickEvent.initEvent (eventType, true, true);
 
-    // As mesaured on https://cookie.riimu.net/speed/
-    var clicksPerSecond = 5;
+    // As measured on https://cookie.riimu.net/speed/
+    // Conservatively throttled to 3
+    var clicksPerSecond = 3;
 
     for (var i=0; i < clicksPerSecond; i++){
       node.dispatchEvent (clickEvent);
