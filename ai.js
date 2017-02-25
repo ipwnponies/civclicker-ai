@@ -11,7 +11,7 @@ window.onload = function(){
 }
 
 window.setInterval(function aiLoop() {
-  foodResourceHeuristic();
+  basicResourceHeuristic();
   populationLimitHeuristic();
 
   for (var i=0; i<5 && heap.size()>0; i++){
@@ -20,13 +20,26 @@ window.setInterval(function aiLoop() {
   }
 }, 1000);
 
-function foodResourceHeuristic(){
-  var food = civclicker.resourceData.find( function(elem) {
-    return (elem.id === 'food');
+function basicResourceHeuristic(){
+  var basicResources = civclicker.resourceData.filter( function(elem) {
+    return elem.subType == 'basic';
   });
 
-  var score = (food.limit - food.owned)/food.limit;
-  heap.push({score:score, action: clickFood});
+  for (const resource of basicResources){
+    if (resource.limit === 0) {
+      var score = 1;
+    }
+    else {
+      var score = (resource.limit - resource.owned) / resource.limit;
+    }
+
+    heap.push({
+      score:score,
+      action: function(){
+        clickResource(resource.id)
+      }
+    });
+  }
 }
 
 function populationLimitHeuristic() {
@@ -47,24 +60,18 @@ function populationLimitHeuristic() {
   });
 }
 
-function clickFood(){
-  clickResource('#foodRow');
-}
-
-function clickWood(){
-  clickResource('#woodRow');
-}
-
-function clickStone(){
-  clickResource('#stoneRow');
-}
-
 function clickTent(){
   clickPurchase('#tentRow');
 }
 
 function clickResource(id) {
-  var targetNode = civdoc.querySelector(id + ' button');
+  var mapping = {
+    "food": "#foodRow",
+    "wood": "#woodRow",
+    "stone": "#stoneRow",
+  };
+
+  var targetNode = civdoc.querySelector(mapping[id] + ' button');
   if (targetNode) {
     //--- Simulate a natural mouse-click sequence.
     triggerMouseEvent (targetNode, "mousedown");
