@@ -1,18 +1,25 @@
+// Mundane details. Like sigdigs
 var civclicker;
 var civdoc;
-
-var heap = new Heap(function(a, b) {
-    return a.score > b.score;
-});
-
 window.onload = function(){
   civclicker = window.frames[0].frameElement.contentWindow;
   civdoc = civclicker.document;
 }
 
+// This dictionary contains the current resource requirement for the next major upgrade we are
+// working towards. This may be further exteneded to take a linked list of objectives and resources.
+var resourceTargets = {
+  'food': 100
+};
+
+var heap = new Heap(function(a, b) {
+    return a.score > b.score;
+});
+
 window.setInterval(function aiLoop() {
   basicResourceHeuristic();
   populationLimitHeuristic();
+  recruitWorker();
 
   for (var i=0; i<5 && heap.size()>0; i++){
     var action = heap.pop().action;
@@ -56,6 +63,42 @@ function populationLimitHeuristic() {
     action: function(){
       setCustomQuantity(1);
       clickTent();
+    }
+  });
+}
+
+function recruitWorker(){
+  var food = civclicker.resourceData.find( function(elem) {
+    return elem.id === 'food';
+  });
+
+  var quantity = 2;
+  var cost = quantity * 20;
+
+  // Current room for population growth
+  var availablePopulationSpace = 1 - civclicker.population.current / civclicker.population.limit;
+
+  if (cost / food.current > 0.1) {
+    // This upgrade is too expensive at this time
+    var score = 0;
+  }
+  else if (food.current > resourceTargets['food']){
+    // Abundant resources leftover after for upgrade
+    // Demand is dictated solely by population growth demand
+    var score = availablePopulationSpace;
+  }
+  else {
+    // Still saving resources for next major upgrade. Factor setback cost and population growth.
+    var setback = cost / resourceTargets['food'];
+    var score = (1 - setback) * availablePopulationSpace;
+  }
+
+  heap.push({
+    score: score,
+    action: function(){
+      civdoc.getElementById('spawnCustomQty').value = quantity;
+      var targetNode = civdoc.querySelector('#spawnCustomButton');
+      triggerMouseEvent(targetNode, "mousedown");
     }
   });
 }
