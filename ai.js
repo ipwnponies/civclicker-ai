@@ -13,7 +13,10 @@ var resourceTargets = {
 };
 
 var heap = new Heap(function(a, b) {
-    return a.score > b.score;
+  // Return a if result is > 0
+  // Return b if result is < 0
+  // We want highest priority returned
+  return b.score - a.score;
 });
 
 window.setInterval(function aiLoop() {
@@ -25,6 +28,8 @@ window.setInterval(function aiLoop() {
     var action = heap.pop().action;
     action();
   }
+
+  heap.clear();
 }, 1000);
 
 function basicResourceHeuristic(){
