@@ -12,6 +12,9 @@ var resourceTargets = {
   'food': 100
 };
 
+// As measured on https://cookie.riimu.net/speed/
+var ACTIONS_PER_SECOND = 5;
+
 var heap = new Heap(function(a, b) {
   // Return a if result is > 0
   // Return b if result is < 0
@@ -24,7 +27,7 @@ window.setInterval(function aiLoop() {
   populationLimitHeuristic();
   recruitWorker();
 
-  for (var i=0; i<5 && heap.size()>0; i++){
+  for (var i=0; i<ACTIONS_PER_SECOND && heap.size()>0; i++){
     var action = heap.pop().action;
     action();
   }
@@ -45,12 +48,15 @@ function basicResourceHeuristic(){
       var score = (resource.limit - resource.owned) / resource.limit;
     }
 
-    heap.push({
-      score:score,
-      action: function(){
-        clickResource(resource.id)
-      }
-    });
+    for (var i=0; i<ACTIONS_PER_SECOND; i++){
+      heap.push({
+        // Decay to account for diminishing returns
+        score: score / (i + 1),
+        action: function(){
+          clickResource(resource.id)
+        }
+      });
+    }
   }
 }
 
@@ -129,14 +135,7 @@ function clickResource(id) {
 function triggerMouseEvent (node, eventType) {
     var clickEvent = civdoc.createEvent ('MouseEvents');
     clickEvent.initEvent (eventType, true, true);
-
-    // As measured on https://cookie.riimu.net/speed/
-    // Conservatively throttled to 3
-    var clicksPerSecond = 3;
-
-    for (var i=0; i < clicksPerSecond; i++){
-      node.dispatchEvent (clickEvent);
-    }
+    node.dispatchEvent (clickEvent);
 }
 
 function setCustomQuantity(quantity){
