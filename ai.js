@@ -109,7 +109,7 @@ function recruitWorker(){
     action: function(){
       civdoc.getElementById('spawnCustomQty').value = quantity;
       var targetNode = civdoc.querySelector('#spawnCustomButton');
-      triggerMouseEvent(targetNode, "mousedown");
+      triggerMouseEvent(targetNode);
     }
   });
 }
@@ -126,15 +126,13 @@ function clickResource(id) {
   };
 
   var targetNode = civdoc.querySelector(mapping[id] + ' button');
-  if (targetNode) {
-    //--- Simulate a natural mouse-click sequence.
-    triggerMouseEvent (targetNode, "mousedown");
-  }
+  triggerMouseEvent (targetNode);
 }
 
-function triggerMouseEvent (node, eventType) {
+// Simulate a natural mouse-click sequence.
+function triggerMouseEvent (node) {
     var clickEvent = civdoc.createEvent ('MouseEvents');
-    clickEvent.initEvent (eventType, true, true);
+    clickEvent.initEvent ("mousedown", true, true);
     node.dispatchEvent (clickEvent);
 }
 
@@ -144,7 +142,5 @@ function setCustomQuantity(quantity){
 
 function clickPurchase(id) {
   var targetNode = civdoc.querySelector(id + ' .buycustom button');
-  if (targetNode) {
-    triggerMouseEvent(targetNode, "mousedown");
-  }
+  triggerMouseEvent(targetNode);
 }
