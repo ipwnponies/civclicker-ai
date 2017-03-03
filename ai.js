@@ -24,6 +24,7 @@ var heap = new Heap(function(a, b) {
 
 window.setInterval(function aiLoop() {
   basicResourceHeuristic();
+  resourceStockpileHeuristic();
   populationLimitHeuristic();
   recruitWorker();
 
@@ -114,6 +115,31 @@ function recruitWorker(){
   });
 }
 
+function resourceStockpileHeuristic(){
+  var basicResources = civclicker.resourceData.filter( function(elem) {
+    return elem.subType == 'basic';
+  });
+
+  for (const resource of basicResources){
+    if (resource.limit === 0) {
+      var score = 1;
+    }
+    else {
+      var score = resource.owned / resource.limit;
+    }
+
+    for (var i=0; i<ACTIONS_PER_SECOND; i++){
+      heap.push({
+        // Decay to account for diminishing returns
+        score: score / (i + 1),
+        action: function(){
+          clickStockpile(resource.id)
+        }
+      });
+    }
+  }
+}
+
 function clickTent(){
   clickPurchase('#tentRow');
 }
@@ -123,6 +149,17 @@ function clickResource(id) {
     "food": "#foodRow",
     "wood": "#woodRow",
     "stone": "#stoneRow",
+  };
+
+  var targetNode = civdoc.querySelector(mapping[id] + ' button');
+  triggerMouseEvent (targetNode);
+}
+
+function clickStockpile(id) {
+  var mapping = {
+    "food": "#barnRow",
+    "wood": "#woodstockRow",
+    "stone": "#stonestockRow",
   };
 
   var targetNode = civdoc.querySelector(mapping[id] + ' button');
